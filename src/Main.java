@@ -1,6 +1,6 @@
 import example.messages.Greetings;
 import framework.ActorApp;
-import framework.supervisor.SuperVisor;
+import framework.supervisor.Supervisor;
 import medium.messages.ReadClaps;
 import medium.messages.RecordClaps;
 import medium.messages.TrackBlog;
@@ -16,7 +16,7 @@ public class Main {
     }
 
     public static void example(){
-        SuperVisor superVisor = ActorApp.run("example.actors").superVisor();
+        Supervisor superVisor = ActorApp.run("example.actors").superVisor();
         UUID recipientId = superVisor.spawnActor("ReceivingActor");
         UUID forwarderId = superVisor.spawnActor("Forwarder");
 
@@ -24,7 +24,7 @@ public class Main {
     }
 
     public static void serverToBlog(){
-        SuperVisor superVisor = ActorApp.run("medium.actors").superVisor();
+        Supervisor superVisor = ActorApp.run("medium.actors").superVisor();
         UUID serverId = superVisor.spawnActor("Server");
         UUID blogId = superVisor.spawnActor("Blog", 1);
 
@@ -33,23 +33,23 @@ public class Main {
     }
 
     public static void serverToUser(){
-        SuperVisor superVisor = ActorApp.run("medium.actors").superVisor();
-        UUID serverId = superVisor.spawnActor("Server");
-        UUID userId = superVisor.spawnActor("User", 1);
+        Supervisor supervisor = ActorApp.run("medium.actors").superVisor();
+        UUID serverId = supervisor.spawnActor("Server");
+        UUID userId = supervisor.spawnActor("User", 1);
         // Creating new Blog
-        superVisor.sendMessage(new TrackBlog(1, 1, 1, serverId), userId);
+        supervisor.sendMessage(new TrackBlog(1, 1, 1, serverId), userId);
         // Authorization Issue check
-        superVisor.sendMessage(new TrackBlog(2, 2, 1, serverId), userId);
+        supervisor.sendMessage(new TrackBlog(2, 2, 1, serverId), userId);
         // Try creating an existing Blog
-        superVisor.sendMessage(new TrackBlog(3, 1, 1, serverId), userId);
+        supervisor.sendMessage(new TrackBlog(3, 1, 1, serverId), userId);
         // Record Claps through User Actor
-        superVisor.sendMessage(new RecordClaps(4, 1, 5, serverId), userId);
+        supervisor.sendMessage(new RecordClaps(4, 1, 15, serverId), userId);
         // Read Claps through User Actor after waiting for 1 minute to make sure that request 4 has been executed
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        superVisor.sendMessage(new ReadClaps(5, 1, serverId), userId);
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        supervisor.sendMessage(new ReadClaps(5, 1, serverId), userId);
     }
 }

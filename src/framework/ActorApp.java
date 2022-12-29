@@ -1,38 +1,38 @@
 package framework;
 
-import framework.supervisor.DefaultSuperVisor;
-import framework.supervisor.SuperVisor;
+import framework.supervisor.DefaultSupervisor;
+import framework.supervisor.Supervisor;
 
 public class ActorApp {
 
-    private static SuperVisor _superVisor;
+    private static Supervisor _supervisor;
 
-    public static SuperVisor _getSuperVisor() {
-        return _superVisor;
+    public static Supervisor _getSuperVisor() {
+        return _supervisor;
     }
 
-    public static void _setSuperVisor(SuperVisor superVisor) {
-        _superVisor = superVisor;
+    public static void _setSuperVisor(Supervisor superVisor) {
+        _supervisor = superVisor;
     }
 
-    public SuperVisor superVisor() {
-        return _superVisor;
+    public Supervisor superVisor() {
+        return _supervisor;
     }
 
     public static ActorApp run(String actorPath) {
         return new ActorApp(actorPath);
     }
 
-    public static ActorApp run(SuperVisor superVisor) {
+    public static ActorApp run(Supervisor superVisor) {
         return new ActorApp(superVisor);
     }
 
     private ActorApp(String actorPath) {
-        _superVisor = DefaultSuperVisor.actors(actorPath);
+        _supervisor = DefaultSupervisor.actors(actorPath);
     }
 
-    private ActorApp(SuperVisor superVisor) {
-        _superVisor = superVisor;
+    private ActorApp(Supervisor superVisor) {
+        _supervisor = superVisor;
     }
 
 }

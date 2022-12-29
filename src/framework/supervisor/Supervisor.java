@@ -9,12 +9,12 @@ import framework.spawn.ActorFactory;
 
 import java.util.UUID;
 
-public class SuperVisor extends Actor {
+public class Supervisor extends Actor {
     private final ActorFactory actorFactory;
     private final ActorRegistry actorRegistry;
     private final MessageHandler messageHandler;
 
-    public SuperVisor(ActorFactory actorFactory, ActorRegistry actorRegistry,
+    public Supervisor(ActorFactory actorFactory, ActorRegistry actorRegistry,
                       MessageHandler messageHandler) {
         this.actorFactory = actorFactory;
         this.actorRegistry = actorRegistry;

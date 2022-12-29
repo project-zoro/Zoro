@@ -19,7 +19,7 @@ public class MessageProcessor implements Runnable {
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                SendableMessage message = channel.takeLast();
+                SendableMessage message = channel.take();
                 var actor = actorRegistry.getActor(message.receiver());
                 if (actor != null) {
                     actor.onMessage(message.message(), message.sender());
