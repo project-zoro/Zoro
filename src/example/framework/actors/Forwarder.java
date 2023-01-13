@@ -1,16 +1,19 @@
-package example.actors;
+package example.framework.actors;
 
-import example.messages.Greetings;
+import example.framework.messages.Greetings;
 import framework.Actor;
 import framework.Message;
 
 import java.util.UUID;
 
-public class ReceivingActor extends Actor {
+public class Forwarder extends Actor {
+
     @Override
     public void onMessage(Message message, UUID from) {
         if (message instanceof Greetings greetings) {
-            System.out.println("Receiver: " + greetings);
+            UUID forwardTo = greetings.from();
+            System.out.println("Forwarder: " + greetings);
+            sendMessage(new Greetings("Thanks for the message!", getId()), forwardTo);
         }
     }
 

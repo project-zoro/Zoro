@@ -1,4 +1,4 @@
-package example.messages;
+package example.framework.messages;
 
 import framework.Message;
 
