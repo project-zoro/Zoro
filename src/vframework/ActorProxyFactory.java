@@ -4,7 +4,14 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.Proxy;
 
-public record ActorProxyFactory(String namespace) {
+public class ActorProxyFactory{
+    String namespace;
+    MethodHandler methodHandler = new MethodHandler();
+
+    public ActorProxyFactory(String namespace){
+        this.namespace = namespace;
+    }
+
     private <T extends Actor> T createProxyInternal(Class<?> interfaceClass){
         Reflections reflections = new Reflections(namespace);
 
@@ -17,7 +24,8 @@ public record ActorProxyFactory(String namespace) {
             System.out.println(e);
         }
 
-        java.lang.reflect.InvocationHandler handler = new vframework.InvocationHandler(original);
+        java.lang.reflect.InvocationHandler handler = new vframework.InvocationHandler(original, methodHandler);
+
         T proxyClass = (T) Proxy.newProxyInstance(
                 interfaceClass.getClassLoader(),
                 new Class[] { interfaceClass },
@@ -27,7 +35,7 @@ public record ActorProxyFactory(String namespace) {
         return proxyClass;
     }
 
-    public <T extends Actor> T createProxy(Class<?> interfaceClass){
+    public <T extends ActorWithNoKey> T createProxy(Class<?> interfaceClass){
         return createProxyInternal(interfaceClass);
     }
 }

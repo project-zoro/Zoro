@@ -29,6 +29,7 @@ public class Main {
     public static void exampleVFramework(){
         ITestActor testActor = Client.init("example").actorFactory().createProxy(ITestActor.class);
         testActor.display("This is test actor");
+        testActor.display("This is the same test actor");
     }
 
     public static void serverToBlog(){

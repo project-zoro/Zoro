@@ -2,11 +2,11 @@ package vframework;
 
 import java.lang.reflect.Method;
 
-public record InvocationHandler(Object actor) implements java.lang.reflect.InvocationHandler {
+public record InvocationHandler(Object actor, MethodHandler methodHandler) implements java.lang.reflect.InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         System.out.println("Inside invoke: " + method.getName());
-        method.invoke(actor, args);
+        methodHandler.tryQueue(new SendableMethod(method, actor.hashCode(), actor, args));
         return null;
     }
 }
