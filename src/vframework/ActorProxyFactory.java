@@ -5,8 +5,10 @@ import org.reflections.Reflections;
 import java.lang.reflect.Proxy;
 
 public class ActorProxyFactory{
-    String namespace;
-    MethodHandler methodHandler = new MethodHandler();
+    private String namespace;
+
+    private ResponseHandler responseHandler = new ResponseHandler();
+    private MethodPublisher methodPublisher = new MethodPublisher(responseHandler);
 
     public ActorProxyFactory(String namespace){
         this.namespace = namespace;
@@ -24,7 +26,7 @@ public class ActorProxyFactory{
             System.out.println(e);
         }
 
-        java.lang.reflect.InvocationHandler handler = new vframework.InvocationHandler(original, methodHandler);
+        java.lang.reflect.InvocationHandler handler = new vframework.InvocationHandler(original, methodPublisher);
 
         T proxyClass = (T) Proxy.newProxyInstance(
                 interfaceClass.getClassLoader(),
@@ -37,5 +39,9 @@ public class ActorProxyFactory{
 
     public <T extends ActorWithNoKey> T createProxy(Class<?> interfaceClass){
         return createProxyInternal(interfaceClass);
+    }
+
+    public Object getResponse(Object requestID){
+        return responseHandler.consumeResponse(requestID);
     }
 }

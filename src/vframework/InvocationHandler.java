@@ -1,12 +1,14 @@
 package vframework;
 
 import java.lang.reflect.Method;
+import java.util.UUID;
 
-public record InvocationHandler(Object actor, MethodHandler methodHandler) implements java.lang.reflect.InvocationHandler {
+public record InvocationHandler(Object actor, MethodPublisher methodPublisher) implements java.lang.reflect.InvocationHandler {
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public UUID invoke(Object proxy, Method method, Object[] args) throws Throwable {
         System.out.println("Inside invoke: " + method.getName());
-        methodHandler.tryQueue(new SendableMethod(method, actor.hashCode(), actor, args));
-        return null;
+        UUID requestID = UUID.randomUUID();
+        methodPublisher.tryQueue(new SendableMethod(method, actor.hashCode(), requestID, actor, args));
+        return requestID;
     }
 }

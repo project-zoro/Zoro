@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class MethodHandler {
+public class MethodPublisher {
     private static final AtomicLong ROUND_ROBIN = new AtomicLong(0);
     private static final Map<Integer, Long> map = new ConcurrentHashMap<>();
     private static final int SIZE = QueueConfiguration.optimizedNumberOfQueues();
@@ -17,11 +17,11 @@ public class MethodHandler {
             .mapToObj(__ -> new LinkedBlockingDeque<SendableMethod>(20))
             .collect(Collectors.toList());
 
-    public MethodHandler() {
+    public MethodPublisher(ResponseHandler responseHandler) {
         var executorService = Executors.newFixedThreadPool(SIZE);
         IntStream.rangeClosed(0, SIZE)
                 .mapToObj(CHANNELS::get)
-                .forEach(channel -> executorService.execute(new MethodProcessor(channel)));
+                .forEach(channel -> executorService.execute(new MethodProcessor(channel, responseHandler)));
     }
 
     /**

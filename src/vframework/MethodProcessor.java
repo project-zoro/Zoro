@@ -6,9 +6,11 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class MethodProcessor implements Runnable {
     private final BlockingDeque<SendableMethod> channel;
+    private final ResponseHandler responseHandler;
 
-    public MethodProcessor(LinkedBlockingDeque<SendableMethod> channel) {
+    public MethodProcessor(LinkedBlockingDeque<SendableMethod> channel, ResponseHandler responseHandler) {
         this.channel = channel;
+        this.responseHandler = responseHandler;
     }
 
     @Override
@@ -16,7 +18,8 @@ public class MethodProcessor implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 SendableMethod sendableMethod = channel.take();
-                sendableMethod.method().invoke(sendableMethod.object(), sendableMethod.args());
+                Object result = sendableMethod.method().invoke(sendableMethod.object(), sendableMethod.args());
+                responseHandler.publishResponse(sendableMethod.requestID(), result);
             } catch (InterruptedException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
                 return;
