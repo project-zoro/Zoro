@@ -13,13 +13,17 @@ public class MethodProcessor implements Runnable {
         this.responseHandler = responseHandler;
     }
 
+    /**
+     * Takes up and invokes the first item that the specific channel received and then publishes the result using ResponseHandler.
+     * The next item will be picked up only after the current one is executed.
+     */
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 SendableMethod sendableMethod = channel.take();
                 Object result = sendableMethod.method().invoke(sendableMethod.object(), sendableMethod.args());
-                responseHandler.publishResponse(sendableMethod.requestID(), result);
+                if(result != null) responseHandler.publishResponse(sendableMethod.requestID(), result);
             } catch (InterruptedException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
                 return;

@@ -13,6 +13,13 @@ public class MethodPublisher {
     private static final AtomicLong ROUND_ROBIN = new AtomicLong(0);
     private static final Map<Integer, Long> map = new ConcurrentHashMap<>();
     private static final int SIZE = QueueConfiguration.optimizedNumberOfQueues();
+
+    /**
+     * Holds all the methods that needs to be invoked for an actor by the MethodProcessor.
+     * A channel can contain multiple actors but not the vice-versa to maintain single-threadedness.
+     * This could lead to uneven load distribution.
+     * Currently, new actors are assigned to a channel in round-robin fashion.
+     */
     private static final List<LinkedBlockingDeque<SendableMethod>> CHANNELS = IntStream.rangeClosed(0, SIZE)
             .mapToObj(__ -> new LinkedBlockingDeque<SendableMethod>(20))
             .collect(Collectors.toList());
