@@ -1,26 +1,35 @@
-import example.messages.Greetings;
+import example.framework.messages.Greetings;
+import example.vframework.actors.ITestActor;
 import framework.ActorApp;
 import framework.supervisor.Supervisor;
 import medium.messages.ReadClaps;
 import medium.messages.RecordClaps;
 import medium.messages.TrackBlog;
+import vframework.Client;
 
 import java.util.UUID;
 
 public class Main {
     public static void main(String[] args) {
 
-//        example();
+//        exampleFramework();
+        exampleVFramework();
 //        serverToBlog();
-        serverToUser();
+//        serverToUser();
     }
 
-    public static void example(){
-        Supervisor superVisor = ActorApp.run("example.actors").superVisor();
+    public static void exampleFramework(){
+        Supervisor superVisor = ActorApp.run("example.framework.actors").superVisor();
         UUID recipientId = superVisor.spawnActor("ReceivingActor");
         UUID forwarderId = superVisor.spawnActor("Forwarder");
 
         superVisor.sendMessage(new Greetings("hello", recipientId), forwarderId);
+    }
+
+    public static void exampleVFramework(){
+        ITestActor testActor = Client.init("example").actorFactory().createProxy(ITestActor.class);
+        testActor.display("This is test actor");
+        testActor.display("This is the same test actor");
     }
 
     public static void serverToBlog(){
